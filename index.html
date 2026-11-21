@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Study Buddy Pro — Sirimalla Joseph</title>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --surface: #ffffff;
+      --primary: #4f46e5;
+      --cyan: #06b6d4;
+      --pink: #ec4899;
+      --green: #10b981;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: radial-gradient(circle at top, #1e1b4b 0%, var(--bg-dark) 70%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    @media (min-width: 520px) {
+      body { padding: 16px; }
+    }
+
+    .phone-shell {
+      width: 100%;
+      max-width: 430px;
+      height: 100dvh;
+      max-height: 880px;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 28px 75px rgba(0, 0, 0, 0.55);
+    }
+
+    @media (min-width: 520px) {
+      .phone-shell {
+        border-radius: 34px;
+        border: 7px solid #1e293b;
+      }
+    }
+
+    .toast {
+      position: absolute;
+      top: 58px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      background: rgba(15, 23, 42, 0.95);
+      color: #fff;
+      padding: 9px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 95;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Entry Screen */
+    .entry-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      background: linear-gradient(165deg, #1e1b4b 0%, #0f172a 55%, #090d16 100%);
+      color: #fff;
+      padding: 16px 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      overflow-y: auto;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .entry-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.97);
+    }
+
+    .hero { text-align: center; }
+
+    .creator-badge {
+      display: inline-block;
+      background: rgba(251, 191, 36, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      color: #fde68a;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .avatar-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .avatar-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      background: #1e293b;
+      flex-shrink: 0;
+    }
+
+    .avatar-img.sm {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+    }
+
+    .hero h1 { margin: 0; font-size: 20px; }
+    .hero p { margin: 3px 0 0; font-size: 11px; color: #cbd5e1; }
+
+    .glass-box {
+      background: rgba(255, 255, 255, 0.09);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(12px);
+      border-radius: 18px;
+      padding: 11px;
+      margin-top: 8px;
+      text-align: left;
+    }
+
+    .lang-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .lang-btn {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(15, 23, 42, 0.55);
+      color: #e2e8f0;
+      border-radius: 11px;
+      padding: 7px 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, var(--cyan), var(--primary));
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .unique-id-display {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px dashed rgba(244, 114, 182, 0.75);
+      border-radius: 13px;
+      padding: 8px 10px;
+      margin: 6px 0 8px;
+      gap: 6px;
+    }
+
+    .unique-id-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: #f9a8d4;
+      word-break: break-all;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .mode-card {
+      border: none;
+      border-radius: 18px;
+      padding: 13px 10px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+    }
+
+    .m-study { background: linear-gradient(145deg, #4f46e5, #0891b2); }
+    .m-meet { background: linear-gradient(145deg, #db2777, #f59e0b); }
+
+    /* Top Bar */
+    .top-bar {
+      background: linear-gradient(135deg, #1e1b4b, #3730a3);
+      color: #fff;
+      padding: 9px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .top-title h2 { margin: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-title small { font-size: 10px; color: #f9a8d4; display: block; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Body */
+    .scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 12px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .page { display: none; flex-direction: column; gap: 12px; }
+    .page.active { display: flex; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 13px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13.5px;
+      font-weight: 800;
+      gap: 6px;
+    }
+
+    .pill {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: #e0e7ff;
+      color: #3730a3;
+      white-space: nowrap;
+    }
+
+    .row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 13px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 12.5px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .btn {
+      border: none;
+      border-radius: 13px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .btn.sm { padding: 5px 9px; font-size: 11px; border-radius: 10px; }
+    .btn.cyan { background: #0891b2; }
+    .btn.pink { background: #db2777; }
+    .btn.green { background: #059669; }
+    .btn.red { background: var(--red); }
+    .btn.amber { background: #d97706; }
+    .btn.soft { background: #e2e8f0; color: var(--text); }
+
+    /* Call Stage */
+    .call-stage {
+      position: relative;
+      background: #0f172a;
+      border-radius: 16px;
+      height: 165px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      margin-bottom: 9px;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    .cam-off-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .call-badges {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      pointer-events: none;
+    }
+
+    .status-chip {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+
+    .media-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-top: 7px;
+    }
+
+    .timer-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eef2ff;
+      border-radius: 14px;
+      padding: 8px 11px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      gap: 6px;
+    }
+
+    .partner-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 13px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      margin-top: 7px;
+      font-size: 12px;
+      gap: 6px;
+    }
+
+    .partner-row.active-partner {
+      border-color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .chat-area {
+      max-height: 230px;
+      overflow-y: auto;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .msg-b {
+      max-width: 92%;
+      padding: 8px 11px;
+      border-radius: 15px;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .msg-b.me { background: var(--primary); color: #fff; align-self: flex-end; }
+    .msg-b.sys { background: #e2e8f0; align-self: flex-start; }
+    .msg-b.junnu { background: #ecfeff; border: 1px solid #a5f3fc; align-self: flex-start; }
+    .msg-b.minnu { background: #fdf2f8; border: 1px solid #fbcfe8; align-self: flex-start; }
+
+    .chat-img {
+      display: block;
+      max-width: 210px;
+      max-height: 170px;
+      border-radius: 10px;
+      margin-top: 6px;
+      border: 1px solid rgba(15, 23, 42, 0.15);
+      object-fit: cover;
+    }
+
+    .img-dl-btn {
+      margin-top: 5px;
+      display: inline-block;
+      background: rgba(15, 23, 42, 0.78);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .opt-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .opt-btn {
+      text-align: left;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .opt-btn.selected { border-color: var(--primary); background: #eef2ff; color: #312e81; }
+    .opt-btn.correct { border-color: var(--green); background: #dcfce7; color: #065f46; }
+    .opt-btn.wrong { border-color: var(--red); background: #fee2e2; color: #991b1b; }
+
+    .news-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+
+    .news-item strong { font-size: 12.5px; color: var(--text); display: block; margin-bottom: 3px; }
+    .news-meta { font-size: 10.5px; color: var(--muted); font-weight: 700; margin-bottom: 4px; }
+
+    .book-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .b-tab {
+      border: 1.5px solid #cbd5e1;
+      background: #fff;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .b-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .book-view {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 11px;
+      font-size: 12px;
+      line-height: 1.65;
+      max-height: 195px;
+      overflow-y: auto;
+      white-space: pre-line;
+    }
+
+    .bottom-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: #fff;
+      border-top: 1px solid var(--border);
+      padding: 6px 4px 8px;
+      flex-shrink: 0;
+    }
+
+    .b-nav {
+      border: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .b-nav span:first-child { font-size: 16px; }
+    .b-nav.active { color: var(--primary); }
+
+    .chess-8x8 {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      aspect-ratio: 1 / 1;
+      border: 2px solid #1e293b;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .sq {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      cursor: pointer;
+    }
+
+    .sq.l { background: #f8fafc; }
+    .sq.d { background: #475569; color: #fff; }
+    .sq.sel { outline: 3px solid var(--amber); z-index: 2; }
+
+    .ludo-6 {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .l-sq {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 5px 2px;
+      min-height: 40px;
+      text-align: center;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .l-sq.safe { background: #fef3c7; border-color: var(--amber); }
+
+    .ttt-3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      max-width: 210px;
+      margin: 8px auto 0;
+    }
+
+    .ttt-sq {
+      aspect-ratio: 1 / 1;
+      font-size: 22px;
+      font-weight: 800;
+      border-radius: 13px;
+      border: 2px solid #cbd5e1;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .typing-target {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px;
+      border-radius: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .key-arena {
+      position: relative;
+      height: 150px;
+      background: linear-gradient(180deg, #0f172a, #1e1b4b);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 8px;
+      border: 2px solid #334155;
+    }
+
+    .falling-key {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #f59e0b;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translateX(-50%);
+    }
+
+    .muted { font-size: 11px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="phone-shell">
+    <div id="toast" class="toast"></div>
+
+    <!-- ENTRY / LANGUAGE & LOGIN SCREEN -->
+    <div id="entryScreen" class="entry-screen">
+      <div class="hero">
+        <div class="creator-badge">✨ Creator: Sirimalla Joseph</div>
+
+        <div class="avatar-wrap">
+          <img id="entryAvatarImg" class="avatar-img" alt="User Avatar" />
+          <div style="text-align:left;">
+            <h1 id="t_appTitle">Study Buddy Pro</h1>
+            <p id="t_appSub">Creator: <strong>Sirimalla Joseph</strong> • RRB GK • Chat • Games</p>
+          </div>
+        </div>
+
+        <div class="glass-box">
+          <div style="font-size:11px; color:#fde68a; font-weight:800;" id="t_chooseLang">
+            🌐 భాష ఎంచుకోండి / Choose Language:
+          </div>
+          <div class="lang-row">
+            <button type="button" class="lang-btn active" id="langBtn_te" onclick="setAppLanguage('te')">తెలుగు</button>
+            <button type="button" class="lang-btn" id="langBtn_en" onclick="setAppLanguage('en')">English</button>
+            <button type="button" class="lang-btn" id="langBtn_hi" onclick="setAppLanguage('hi')">हिन्दी</button>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:9px;">
+            <span style="font-size:11px; color:#cbd5e1;" id="t_yourId">మీ Unique ID (J❤️R Format)</span>
+            <button type="button" class="chip-btn" onclick="regenerateUniqueId()" id="t_changeId">Change ID</button>
+          </div>
+          <div class="unique-id-display">
+            <span class="unique-id-code" id="entryUniqueId">J❤️R-...</span>
+            <button type="button" class="chip-btn" onclick="copyMyUniqueId()" id="t_copy">Copy</button>
+          </div>
+
+          <div style="font-size:11px; color:#cbd5e1; margin-bottom:4px;" id="t_uniqueNameLbl">
+            మీ Unique పేరు & Profile Photo (లేకపోతే Auto Image)
+          </div>
+          <div class="row" style="margin-bottom:6px;">
+            <input type="text" id="entryUniqueName" placeholder="Ex: Joseph_RRB" style="flex:1; background:rgba(255,255,255,0.95);" />
+            <button type="button" class="chip-btn" style="padding:8px 11px;" onclick="saveUniqueName()" id="t_save">Save</button>
+          </div>
+
+          <div class="row">
+            <input type="file" id="profilePhotoInput" accept="image/*" style="display:none;" onchange="handleProfileImageUpload(event)" />
+            <button type="button" class="chip-btn" style="flex:1;" onclick="document.getElementById('profilePhotoInput').click()" id="t_uploadImg">
+              🖼️ Add Image
+            </button>
+            <button type="button" class="chip-btn" onclick="useAutoAvatar()" id="t_autoImg">
+              ✨ Auto Image
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="text-align:center; font-size:12px; font-weight:700; margin-bottom:6px;" id="t_loginPrompt">
+          Creator: <strong>Sirimalla Joseph</strong> — మోడ్ ఎంచుకుని Login అవ్వండి:
+        </div>
+        <div class="mode-grid">
+          <button type="button" class="mode-card m-study" onclick="launchApp('study')">
+            <span style="font-size:24px;">🚆</span>
+            <strong style="font-size:13.5px;" id="t_studyLogin">RRB Study Login</strong>
+            <span style="font-size:10.5px; opacity:0.92;" id="t_studySub">GK, News & Books</span>
+          </button>
+          <button type="button" class="mode-card m-meet" onclick="launchApp('meeting')">
+            <span style="font-size:24px;">💬</span>
+            <strong style="font-size:13.5px;" id="t_chatLogin">Personal Chat & Call</strong>
+            <span style="font-size:10.5px; opacity:0.92;" id="t_chatSub">Images, Download & Call</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+      <div class="top-left">
+        <img id="topAvatarImg" class="avatar-img sm" alt="Me" />
+        <div class="top-title">
+          <h2 id="topModeTitle">🚆 RRB Study Mode</h2>
+          <small id="topUserInfo">Creator: Sirimalla Joseph</small>
+        </div>
+      </div>
+      <div class="row">
+        <button type="button" class="chip-btn" onclick="showEntry()" id="t_topLogin">Login / Lang</button>
+        <button type="button" class="chip-btn" onclick="copyMyUniqueId()" id="t_topCopy">Copy ID</button>
+      </div>
+    </div>
+
+    <!-- SCROLLABLE CONTENT -->
+    <div class="scroll-body">
+      <!-- PAGE 1: CALL + PARTNERS + PERSONAL CHAT WITH IMAGE SEND & DOWNLOAD -->
+      <section id="page-talk" class="page active">
+        <div class="card">
+          <div class="card-head">
+            <span id="t_callTitle">📞 In-App Video & Audio Call</span>
+            <span class="pill" id="callStatePill">Idle</span>
+          </div>
+
+          <div class="call-stage">
+            <video id="localVideo" autoplay playsinline muted></video>
+            <div id="camOffOverlay" class="cam-off-overlay">
+              <span style="font-size:26px;">📵</span>
+              <span id="camOffText">Video Off / Call Not Started</span>
+            </div>
+            <div class="call-badges">
+              <span class="status-chip" id="videoStatusBadge">📹 Video: OFF</span>
+              <span class="status-chip" id="audioStatusBadge">🎙️ Audio: OFF</span>
+            </div>
+          </div>
+
+          <div class="row" style="margin-bottom:6px;">
+            <button type="button" class="btn green" style="flex:1;" onclick="startCall('video')">📹 Video</button>
+            <button type="button" class="btn cyan" style="flex:1;" onclick="startCall('audio')">🎙️ Audio</button>
+            <button type="button" class="btn red" onclick="endCall()">End</button>
+          </div>
+
+          <div class="media-controls">
+            <button type="button" class="btn" onclick="setVideoEnabled(true)">📹 Video On</button>
+            <button type="button" class="btn amber" onclick="setVideoEnabled(false)">🚫 Video Off</button>
+            <button type="button" class="btn" onclick="setAudioEnabled(true)">🎙️ Audio On</button>
+            <button type="button" class="btn amber" onclick="setAudioEnabled(false)">🔇 Audio Off</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="timer-strip">
+            <span>⏱️ <span id="t_timerLbl">Study Timer</span>: <span id="timerText">25:00</span></span>
+            <div class="row">
+              <button type="button" class="btn cyan sm" onclick="toggleTimer()" id="timerBtn">Start</button>
+              <button type="button" class="btn soft sm" onclick="resetTimer()" id="t_resetBtn">Reset</button>
+            </div>
+          </div>
+
+          <div class="card-head">
+            <span id="t_partnerHead">🤝 Personal Chat Partners (J❤️R ID)</span>
+            <span class="pill" id="partnerBadge">0</span>
+          </div>
+          <div class="row" style="margin-bottom:6px;">
+            <input type="text" id="partnerIdInput" placeholder="Partner ID (Ex: J❤️R-ABC-123)" style="flex:1;" />
+            <input type="text" id="partnerNameInput" placeholder="Partner Name" style="flex:1;" />
+          </div>
+          <button type="button" class="btn green" style="width:100%;" onclick="addUniquePartner()" id="t_addPartner">+ Add Partner</button>
+          <div id="partnerListBox"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span id="t_personalChatHead">💬 Personal Chat (Image Send & Download)</span>
+            <span class="pill" id="activeChatTargetPill">General</span>
+          </div>
+
+          <div class="chat-area" id="talkBox"></div>
+
+          <input type="file" id="chatImageInput" accept="image/*" style="display:none;" onchange="sendChatImage(event)" />
+          <div class="row">
+            <button type="button" class="btn pink" onclick="document.getElementById('chatImageInput').click()" title="Send Image">
+              🖼️ Image
+            </button>
+            <input type="text" id="talkInput" placeholder="మెసేజ్ రాయండి..." style="flex:1;" onkeydown="if(event.key==='Enter') sendTalk()" />
+            <button type="button" class="btn" onclick="sendTalk()" id="t_sendBtn">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 2: MINNU RRB GK QUIZ (EVERY 5 MIN + ABCD) + JUNNU AI -->
+      <section id="page-ai" class="page">
+        <div class="card">
+          <div class="card-head">
+            <span id="t_minnuTitle">🐥 Minnu RRB GK (Every 5m • A/B/C/D)</span>
+            <span class="pill" id="minnuScore">Score: 0</span>
+          </div>
+
+          <div class="timer-strip" style="background:#fdf2f8; color:#831843; margin-bottom:8px;">
+            <span>⏳ <span id="t_next5mLbl">Next RRB Question in</span>: <strong id="minnu5mCountdown">05:00</strong></span>
+            <button type="button" class="btn pink sm" onclick="triggerMinnu5MinQuestion(true)" id="t_askNow">Ask Now</button>
+          </div>
+
+          <div class="row" style="margin-bottom:8px;">
+            <select id="rrbCategoryFilter" onchange="filterRRBQuestions()" style="flex:1;">
+              <option value="ALL">All RRB Topics (GK + CA + Science)</option>
+              <option value="Polity & Railways">Indian Polity & Railways</option>
+              <option value="Geography & History">Geography & History</option>
+              <option value="Science & Tech">General Science & Tech</option>
+              <option value="Current Affairs">Current Affairs</option>
+            </select>
+            <button type="button" class="btn cyan sm" onclick="changeMinnuQuestion()" id="t_changeQ">🔄 Change</button>
+          </div>
+
+          <div id="minnuQCard" class="msg-b minnu" style="max-width:100%;"></div>
+          <div id="minnuOptionsBox" class="opt-grid"></div>
+
+          <div class="row">
+            <button type="button" class="btn green" style="flex:1;" onclick="checkSelectedMinnuOption()" id="t_checkAns">✅ Check Answer</button>
+            <button type="button" class="btn cyan" style="flex:1;" onclick="changeMinnuQuestion()" id="t_nextQ">➡️ Next Question</button>
+          </div>
+          <div id="minnuFeedback" class="muted" style="margin-top:8px; font-weight:700;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span id="t_junnuTitle">🧠 Junnu AI — RRB Doubt Explainer</span>
+            <span class="pill">Instant</span>
+          </div>
+          <div class="chat-area" id="junnuBox"></div>
+          <div class="row">
+            <input type="text" id="junnuInput" placeholder="Ex: Indian Railways zones, Article 370, Newton laws..." style="flex:1;" onkeydown="if(event.key==='Enter') askJunnu()" />
+            <button type="button" class="btn cyan" onclick="askJunnu()" id="t_askBtn">Ask</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE 3: DAILY NEWS PAPERS + BOOKS & BIBLE -->
+      <section id="page-books" class="page">
+        <div class="card">
+          <div class="card-head">
+            <span id="t_newsTitle">📰 Daily Newspaper & Current Affairs</span>
+            <button type="button" class="btn green sm" onclick="syncDailyNews(true)" id="t_dailyUpdate">🔄 Update</button>
+          </div>
+          <div class="muted" id="newsSyncInfo" style="margin-bottom:8px;">Last Updated: Loading...</div>
+          <div id="dailyNewsList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span id="t_booksTitle">📖 Study Books & Holy Bible</span>
+            <span class="pill">RRB Notes</span>
+          </div>
+          <div class="book-tabs">
+            <button type="button" class="b-tab active" onclick="pickBook('rrb_gk', this)">🚆 RRB GK</button>
+            <button type="button" class="b-tab" onclick="pickBook('bible', this)">✝️ Holy Bible</button>
+            <button type="button" class="b-tab" onclick="pickBook('science', this)">🔬 Science</button>
+            <button type="button" class="b-tab" onclick="pickBook('maths', this)">📐 Maths</button>
+          </div>
+          <input type="text" id="bookSearch" placeholder="Search..." oninput="drawBook()" style="margin-bottom:8px;" />
+          <div id="bookContentBox" class="book-view"></div>
+        </div>
+      </section>
+
+      <!-- PAGE 4: GAMES (INCLUDING KEYBOARD TYPING & KEYBOARD DODGE) -->
+      <section id="page-games" class="page">
+        <div class="card">
+          <div class="card-head">
+            <span id="t_gamesTitle">🎮 Games & Keyboard Practice</span>
+            <span class="pill">Break Time</span>
+          </div>
+          <div class="row" style="margin-bottom:6px;">
+            <button type="button" class="btn cyan sm" style="flex:1;" onclick="pickGame('typing')">⌨️ Typing</button>
+            <button type="button" class="btn amber sm" style="flex:1;" onclick="pickGame('keygame')">🕹️ Key Dodge</button>
+            <button type="button" class="btn sm" style="flex:1;" onclick="pickGame('chess')">♟️ Chess</button>
+          </div>
+          <div class="row">
+            <button type="button" class="btn pink sm" style="flex:1;" onclick="pickGame('ludo')">🎲 Ludo</button>
+            <button type="button" class="btn green sm" style="flex:1;" onclick="pickGame('ttt')">⭕ TTT</button>
+          </div>
+        </div>
+
+        <!-- KEYBOARD TYPING GAME -->
+        <div id="g-typing" class="card">
+          <div class="card-head">
+            <span>⌨️ Keyboard Typing Speed Test</span>
+            <button type="button" class="btn soft sm" onclick="resetTypingGame()">New Text</button>
+          </div>
+          <div class="row" style="margin-bottom:8px; justify-content:space-between;">
+            <span class="pill" id="typingWPM">WPM: 0</span>
+            <span class="pill" id="typingAcc">Accuracy: 100%</span>
+            <span class="pill" id="typingTime">30s</span>
+          </div>
+          <div class="typing-target" id="typingTargetText"></div>
+          <input type="text" id="typingInputBox" placeholder="Type the text above using your keyboard..." oninput="handleTypingInput()" />
+          <div id="typingResult" class="muted" style="margin-top:6px; font-weight:700;"></div>
+        </div>
+
+        <!-- KEYBOARD FALLING KEYS / ARROW DODGE GAME -->
+        <div id="g-keygame" class="card" style="display:none;">
+          <div class="card-head">
+            <span>🕹️ Keyboard Key Catcher (A-Z / Arrows)</span>
+            <div class="row">
+              <button type="button" class="btn green sm" onclick="startKeyCatcher()">Start</button>
+              <button type="button" class="btn red sm" onclick="stopKeyCatcher()">Stop</button>
+            </div>
+          </div>
+          <div class="row" style="justify-content:space-between;">
+            <span class="pill" id="keyGameScore">Score: 0</span>
+            <span class="pill" id="keyGameLives">Lives: 5</span>
+          </div>
+          <div class="muted" style="margin-top:6px;">
+            మీ కీబోర్డ్‌లో కనిపించే అక్షరాన్ని (A–Z) నొక్కండి లేదా ⬅️ ➡️ Arrow Keys తో బాస్కెట్ కదపండి!
+          </div>
+          <div class="key-arena" id="keyArena">
+            <div id="catcherBasket" style="position:absolute; bottom:6px; left:50%; transform:translateX(-50%); background:#10b981; color:#fff; font-size:11px; font-weight:900; padding:4px 12px; border-radius:999px;">
+              [ ⬅️ ➡️ ]
+            </div>
+          </div>
+        </div>
+
+        <div id="g-chess" class="card" style="display:none;">
+          <div class="card-head">
+            <span>♟️ Chess (2 Players)</span>
+            <button type="button" class="btn soft sm" onclick="resetChess()">Reset</button>
+          </div>
+          <div id="chessStatus" class="muted">Turn: White</div>
+          <div id="chessGrid" class="chess-8x8"></div>
+        </div>
+
+        <div id="g-ludo" class="card" style="display:none;">
+          <div class="card-head">
+            <span>🎲 Ludo Race</span>
+            <button type="button" class="btn soft sm" onclick="resetLudo()">Reset</button>
+          </div>
+          <div id="ludoStatus" class="muted" style="margin-bottom:6px;">Player 1 (🔴) Turn</div>
+          <div class="row">
+            <button type="button" class="btn green" onclick="rollLudo()">🎲 Roll Dice</button>
+            <span class="pill" id="ludoDice">Dice: -</span>
+          </div>
+          <div id="ludoGrid" class="ludo-6"></div>
+        </div>
+
+        <div id="g-ttt" class="card" style="display:none;">
+          <div class="card-head">
+            <span>⭕ Tic-Tac-Toe</span>
+            <button type="button" class="btn soft sm" onclick="resetTTT()">Reset</button>
+          </div>
+          <div id="tttStatus" class="muted">Player X Turn</div>
+          <div id="tttGrid" class="ttt-3x3"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-bar">
+      <button type="button" class="b-nav active" id="bn-talk" onclick="openPage('talk', this)">
+        <span>💬</span><span id="nav_talk">Chat & Call</span>
+      </button>
+      <button type="button" class="b-nav" id="bn-ai" onclick="openPage('ai', this)">
+        <span>🐥</span><span id="nav_ai">Minnu RRB</span>
+      </button>
+      <button type="button" class="b-nav" id="bn-books" onclick="openPage('books', this)">
+        <span>📰</span><span id="nav_books">News & Books</span>
+      </button>
+      <button type="button" class="b-nav" id="bn-games" onclick="openPage('games', this)">
+        <span>🎮</span><span id="nav_games">Games</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    const CREATOR_NAME = "Sirimalla Joseph";
+    const ID_PREFIX = "J❤️R";
+
+    const K_USER = "sbp_sj_user_v2";
+    const K_USED_IDS = "sbp_sj_used_ids_v2";
+    const K_USED_NAMES = "sbp_sj_used_names_v2";
+    const K_PARTNERS = "sbp_sj_partners_v2";
+    const K_CHAT = "sbp_sj_chat_v2";
+    const K_SCORE = "sbp_sj_score_v2";
+    const K_NEWS_CACHE = "sbp_sj_news_cache_v2";
+
+    const I18N = {
+      te: {
+        appTitle: "Study Buddy Pro",
+        appSub: `Creator: <strong>${CREATOR_NAME}</strong> • RRB GK • Chat • Games`,
+        chooseLang: "🌐 భాష ఎంచుకోండి (అంతా ఈ భాషలోనే ఉంటుంది):",
+        yourId: "మీ Unique ID (J❤️R Format)",
+        changeId: "Change ID",
+        copy: "Copy",
+        uniqueNameLbl: "మీ Unique పేరు & Profile Photo (లేకపోతే Auto Image)",
+        save: "Save",
+        uploadImg: "🖼️ Add Image",
+        autoImg: "✨ Auto Image",
+        loginPrompt: `Creator: <strong>${CREATOR_NAME}</strong> — మోడ్ ఎంచుకుని Login అవ్వండి:`,
+        studyLogin: "RRB Study Login",
+        studySub: "GK, News & Books",
+        chatLogin: "Personal Chat & Call",
+        chatSub: "Images, Download & Call",
+        topLogin: "Login / Lang",
+        topCopy: "Copy ID",
+        callTitle: "📞 In-App Video & Audio Call",
+        timerLbl: "Study Timer",
+        resetBtn: "Reset",
+        partnerHead: "🤝 Personal Chat Partners (J❤️R ID)",
+        addPartner: "+ Add Partner",
+        personalChatHead: "💬 Personal Chat (Image Send & Download)",
+        sendBtn: "Send",
+        minnuTitle: "🐥 Minnu RRB GK (ప్రతి 5 నిమిషాలకు • A/B/C/D)",
+        next5mLbl: "తదుపరి RRB ప్రశ్న",
+        askNow: "Now",
+        changeQ: "🔄 Change",
+        checkAns: "✅ Check Answer",
+        nextQ: "➡️ Next Question",
+        junnuTitle: "🧠 Junnu AI — RRB Doubt Explainer",
+        askBtn: "Ask",
+        newsTitle: "📰 Daily Newspaper & Current Affairs",
+        dailyUpdate: "🔄 Update",
+        booksTitle: "📖 Study Books & Holy Bible",
+        gamesTitle: "🎮 Games & Keyboard Practice",
+        nav_talk: "Chat & Call",
+        nav_ai: "Minnu RRB",
+        nav_books: "News & Books",
+        nav_games: "Games",
+        chatPlaceholder: "పర్సనల్ మెసేజ్ రాయండి...",
+        junnuWelcome: "హలో! RRB NTPC / Group D డౌట్ ఏదైనా అడగండి — సింపుల్‌గా వివరిస్తాను!",
+        minnu5mAlert: "🐥 Minnu AI (5 Min RRB Alert): కొత్త RRB ప్రశ్న సిద్ధంగా ఉంది!"
+      },
+      en: {
+        appTitle: "Study Buddy Pro",
+        appSub: `Creator: <strong>${CREATOR_NAME}</strong> • RRB GK • Chat • Games`,
+        chooseLang: "🌐 Choose Language (Entire app stays in this language):",
+        yourId: "Your Unique ID (J❤️R Format)",
+        changeId: "Change ID",
+        copy: "Copy",
+        uniqueNameLbl: "Your Unique Name & Profile Photo (Auto Image if empty)",
+        save: "Save",
+        uploadImg: "🖼️ Add Image",
+        autoImg: "✨ Auto Image",
+        loginPrompt: `Creator: <strong>${CREATOR_NAME}</strong> — Choose a mode to Login:`,
+        studyLogin: "RRB Study Login",
+        studySub: "GK, News & Books",
+        chatLogin: "Personal Chat & Call",
+        chatSub: "Images, Download & Call",
+        topLogin: "Login / Lang",
+        topCopy: "Copy ID",
+        callTitle: "📞 In-App Video & Audio Call",
+        timerLbl: "Study Timer",
+        resetBtn: "Reset",
+        partnerHead: "🤝 Personal Chat Partners (J❤️R ID)",
+        addPartner: "+ Add Partner",
+        personalChatHead: "💬 Personal Chat (Image Send & Download)",
+        sendBtn: "Send",
+        minnuTitle: "🐥 Minnu RRB GK (Every 5m • A/B/C/D)",
+        next5mLbl: "Next RRB Question in",
+        askNow: "Now",
+        changeQ: "🔄 Change",
+        checkAns: "✅ Check Answer",
+        nextQ: "➡️ Next Question",
+        junnuTitle: "🧠 Junnu AI — RRB Doubt Explainer",
+        askBtn: "Ask",
+        newsTitle: "📰 Daily Newspaper & Current Affairs",
+        dailyUpdate: "🔄 Update",
+        booksTitle: "📖 Study Books & Holy Bible",
+        gamesTitle: "🎮 Games & Keyboard Practice",
+        nav_talk: "Chat & Call",
+        nav_ai: "Minnu RRB",
+        nav_books: "News & Books",
+        nav_games: "Games",
+        chatPlaceholder: "Type a personal message...",
+        junnuWelcome: "Hello! Ask any RRB NTPC / Group D doubt — I will explain simply!",
+        minnu5mAlert: "🐥 Minnu AI (5 Min RRB Alert): New RRB question is ready!"
+      },
+      hi: {
+        appTitle: "Study Buddy Pro",
+        appSub: `Creator: <strong>${CREATOR_NAME}</strong> • RRB GK • Chat • Games`,
+        chooseLang: "🌐 भाषा चुनें (पूरा ऐप इसी भाषा में रहेगा):",
+        yourId: "आपकी Unique ID (J❤️R Format)",
+        changeId: "Change ID",
+        copy: "Copy",
+        uniqueNameLbl: "आपका Unique नाम & Profile Photo (न होने पर Auto Image)",
+        save: "Save",
+        uploadImg: "🖼️ Add Image",
+        autoImg: "✨ Auto Image",
+        loginPrompt: `Creator: <strong>${CREATOR_NAME}</strong> — मोड चुनकर Login करें:`,
+        studyLogin: "RRB Study Login",
+        studySub: "GK, News & Books",
+        chatLogin: "Personal Chat & Call",
+        chatSub: "Images, Download & Call",
+        topLogin: "Login / Lang",
+        topCopy: "Copy ID",
+        callTitle: "📞 In-App Video & Audio Call",
+        timerLbl: "Study Timer",
+        resetBtn: "Reset",
+        partnerHead: "🤝 Personal Chat Partners (J❤️R ID)",
+        addPartner: "+ Add Partner",
+        personalChatHead: "💬 Personal Chat (Image Send & Download)",
+        sendBtn: "Send",
+        minnuTitle: "🐥 Minnu RRB GK (हर 5 मिनट • A/B/C/D)",
+        next5mLbl: "अगला RRB प्रश्न",
+        askNow: "Now",
+        changeQ: "🔄 Change",
+        checkAns: "✅ Check Answer",
+        nextQ: "➡️ Next Question",
+        junnuTitle: "🧠 Junnu AI — RRB Doubt Explainer",
+        askBtn: "Ask",
+        newsTitle: "📰 Daily Newspaper & Current Affairs",
+        dailyUpdate: "🔄 Update",
+        booksTitle: "📖 Study Books & Holy Bible",
+        gamesTitle: "🎮 Games & Keyboard Practice",
+        nav_talk: "Chat & Call",
+        nav_ai: "Minnu RRB",
+        nav_books: "News & Books",
+        nav_games: "Games",
+        chatPlaceholder: "पर्सनल संदेश लिखें...",
+        junnuWelcome: "नमस्ते! RRB NTPC / Group D का कोई भी प्रश्न पूछें — सरल भाषा में समझाऊंगा!",
+        minnu5mAlert: "🐥 Minnu AI (5 Min RRB Alert): नया RRB प्रश्न तैयार है!"
+      }
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+    }
+
+    // AUTO AVATAR GENERATOR WHEN NO CUSTOM IMAGE IS SET
+    function generateAutoAvatarDataUrl(seedText) {
+      const clean = (seedText || "SJ").trim();
+      const initials = clean.split(/[\s_]+/).map(s => s[0] || "").join("").toUpperCase().slice(0, 2) || "SJ";
+      let hash = 0;
+      for (let i = 0; i < clean.length; i++) hash = clean.charCodeAt(i) + ((hash << 5) - hash);
+      const palettes = [
+        ["#4f46e5", "#06b6d4"],
+        ["#db2777", "#f59e0b"],
+        ["#059669", "#0891b2"],
+        ["#7c3aed", "#ec4899"],
+        ["#d97706", "#ef4444"]
+      ];
+      const [c1, c2] = palettes[Math.abs(hash) % palettes.length];
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/>
+        </linearGradient></defs>
+        <rect width="120" height="120" rx="28" fill="url(#g)"/>
+        <circle cx="60" cy="46" r="20" fill="rgba(255,255,255,0.25)"/>
+        <path d="M24 104c4-20 20-30 36-30s32 10 36 30" fill="rgba(255,255,255,0.25)"/>
+        <text x="60" y="68" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="34" font-weight="900" fill="#ffffff">${initials}</text>
+      </svg>`;
+      return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+    }
+
+    function getUserAvatar(userObj) {
+      if (userObj && userObj.avatar) return userObj.avatar;
+      return generateAutoAvatarDataUrl((userObj && (userObj.name || userObj.id)) || "SJ");
+    }
+
+    // UNIQUE ID & UNIQUE NAME WITH J❤️R FORMAT
+    function getUsedIds() {
+      return JSON.parse(localStorage.getItem(K_USED_IDS) || "[]");
+    }
+
+    function saveUsedId(id) {
+      const arr = getUsedIds();
+      if (!arr.includes(id)) {
+        arr.push(id);
+        localStorage.setItem(K_USED_IDS, JSON.stringify(arr));
+      }
+    }
+
+    function getUsedNames() {
+      return JSON.parse(localStorage.getItem(K_USED_NAMES) || "[]");
+    }
+
+    function saveUsedName(name) {
+      const lower = name.trim().toLowerCase();
+      const arr = getUsedNames();
+      if (lower && !arr.includes(lower)) {
+        arr.push(lower);
+        localStorage.setItem(K_USED_NAMES, JSON.stringify(arr));
+      }
+    }
+
+    function createJLoveRId(seedName = "SJ") {
+      const used = getUsedIds();
+      const tag = (seedName.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 3) || "SJ").padEnd(2, "X");
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+      for (let i = 0; i < 60; i++) {
+        let mid = "";
+        for (let j = 0; j < 4; j++) mid += chars[Math.floor(Math.random() * chars.length)];
+        const suffix = String((Date.now() + i * 17) % 999).padStart(3, "0");
+        const id = `${ID_PREFIX}-${tag}-${mid}-${suffix}`;
+        if (!used.includes(id)) {
+          saveUsedId(id);
+          return id;
+        }
+      }
+      const fb = `${ID_PREFIX}-${tag}-${crypto.randomUUID().slice(0, 6).toUpperCase()}`;
+      saveUsedId(fb);
+      return fb;
+    }
+
+    function initUser() {
+      let user = JSON.parse(localStorage.getItem(K_USER) || "null");
+      if (!user || !user.id || !user.id.startsWith(ID_PREFIX)) {
+        const uname = `Joseph_${Math.floor(1000 + Math.random() * 9000)}`;
+        saveUsedName(uname);
+        const uid = createJLoveRId(uname);
+        user = { id: uid, name: uname, mode: "study", lang: "te", avatar: "" };
+        localStorage.setItem(K_USER, JSON.stringify(user));
+      }
+      if (!user.lang) user.lang = "te";
+      return user;
+    }
+
+    let me = initUser();
+
+    function applyLanguageUI() {
+      const dict = I18N[me.lang] || I18N.te;
+      document.documentElement.lang = me.lang;
+
+      ["te", "en", "hi"].forEach(code => {
+        const el = document.getElementById("langBtn_" + code);
+        if (el) el.classList.toggle("active", me.lang === code);
+      });
+
+      const map = {
+        t_appTitle: dict.appTitle,
+        t_appSub: dict.appSub,
+        t_chooseLang: dict.chooseLang,
+        t_yourId: dict.yourId,
+        t_changeId: dict.changeId,
+        t_copy: dict.copy,
+        t_uniqueNameLbl: dict.uniqueNameLbl,
+        t_save: dict.save,
+        t_uploadImg: dict.uploadImg,
+        t_autoImg: dict.autoImg,
+        t_loginPrompt: dict.loginPrompt,
+        t_studyLogin: dict.studyLogin,
+        t_studySub: dict.studySub,
+        t_chatLogin: dict.chatLogin,
+        t_chatSub: dict.chatSub,
+        t_topLogin: dict.topLogin,
+        t_topCopy: dict.topCopy,
+        t_callTitle: dict.callTitle,
+        t_timerLbl: dict.timerLbl,
+        t_resetBtn: dict.resetBtn,
+        t_partnerHead: dict.partnerHead,
+        t_addPartner: dict.addPartner,
+        t_personalChatHead: dict.personalChatHead,
+        t_sendBtn: dict.sendBtn,
+        t_minnuTitle: dict.minnuTitle,
+        t_next5mLbl: dict.next5mLbl,
+        t_askNow: dict.askNow,
+        t_changeQ: dict.changeQ,
+        t_checkAns: dict.checkAns,
+        t_nextQ: dict.nextQ,
+        t_junnuTitle: dict.junnuTitle,
+        t_askBtn: dict.askBtn,
+        t_newsTitle: dict.newsTitle,
+        t_dailyUpdate: dict.dailyUpdate,
+        t_booksTitle: dict.booksTitle,
+        t_gamesTitle: dict.gamesTitle,
+        nav_talk: dict.nav_talk,
+        nav_ai: dict.nav_ai,
+        nav_books: dict.nav_books,
+        nav_games: dict.nav_games
+      };
+
+      Object.entries(map).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = val;
+      });
+
+      const talkInput = document.getElementById("talkInput");
+      if (talkInput) talkInput.placeholder = dict.chatPlaceholder;
+
+      refreshUserUI();
+      renderMinnuQuestion();
+      renderJunnuWelcome();
+      syncDailyNews(false);
+    }
+
+    function setAppLanguage(langCode) {
+      me.lang = langCode;
+      localStorage.setItem(K_USER, JSON.stringify(me));
+      applyLanguageUI();
+      const label = langCode === "te" ? "తెలుగు" : langCode === "hi" ? "हिन्दी" : "English";
+      showToast(`Language: ${label}`);
+    }
+
+    function handleProfileImageUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 1500000) {
+        return showToast("Image 1.5MB లోపు ఉండాలి!");
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        me.avatar = reader.result;
+        localStorage.setItem(K_USER, JSON.stringify(me));
+        refreshUserUI();
+        showToast("Profile Image set!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function useAutoAvatar() {
+      me.avatar = "";
+      localStorage.setItem(K_USER, JSON.stringify(me));
+      refreshUserUI();
+      showToast("Auto Image generated!");
+    }
+
+    function regenerateUniqueId() {
+      me.id = createJLoveRId(me.name);
+      localStorage.setItem(K_USER, JSON.stringify(me));
+      refreshUserUI();
+      showToast(`New ID: ${me.id}`);
+    }
+
+    function saveUniqueName() {
+      const input = document.getElementById("entryUniqueName");
+      const candidate = input.value.trim();
+      if (candidate.length < 3) {
+        return showToast("Name >= 3 chars!");
+      }
+      const lower = candidate.toLowerCase();
+      const usedNames = getUsedNames();
+      if (usedNames.includes(lower) && me.name.toLowerCase() !== lower) {
+        return showToast(`Try: ${candidate}_${Math.floor(10 + Math.random() * 89)}`);
+      }
+      me.name = candidate;
+      saveUsedName(candidate);
+      me.id = createJLoveRId(candidate);
+      localStorage.setItem(K_USER, JSON.stringify(me));
+      refreshUserUI();
+      showToast(`Saved: ${me.name} (${me.id})`);
+    }
+
+    function copyMyUniqueId() {
+      navigator.clipboard?.writeText(me.id);
+      showToast(`Copied: ${me.id}`);
+    }
+
+    function refreshUserUI() {
+      const av = getUserAvatar(me);
+      document.getElementById("entryAvatarImg").src = av;
+      document.getElementById("topAvatarImg").src = av;
+      document.getElementById("entryUniqueId").innerText = me.id;
+      document.getElementById("entryUniqueName").value = me.name;
+      document.getElementById("topModeTitle").innerText =
+        me.mode === "meeting" ? "💬 Personal Chat & Call" : "🚆 RRB Study Mode";
+      document.getElementById("topUserInfo").innerText =
+        `Creator: ${CREATOR_NAME} • ${me.name} (${me.id})`;
+    }
+
+    function launchApp(mode) {
+      me.mode = mode;
+      localStorage.setItem(K_USER, JSON.stringify(me));
+      refreshUserUI();
+      document.getElementById("entryScreen").classList.add("hide");
+      showToast(`${me.name} • ${CREATOR_NAME}`);
+    }
+
+    function showEntry() {
+      refreshUserUI();
+      document.getElementById("entryScreen").classList.remove("hide");
+    }
+
+    function openPage(pageKey, btnEl) {
+      document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+      document.getElementById(`page-${pageKey}`).classList.add("active");
+      document.querySelectorAll(".b-nav").forEach((b) => b.classList.remove("active"));
+      if (btnEl) btnEl.classList.add("active");
+    }
+
+    // IN-APP VIDEO & AUDIO CALL
+    let localStream = null;
+    let callMode = "none";
+    let videoEnabled = false;
+    let audioEnabled = false;
+
+    function updateMediaBadges() {
+      document.getElementById("callStatePill").innerText =
+        callMode === "video" ? "📹 Video Active" :
+        callMode === "audio" ? "🎙️ Audio Active" : "Idle";
+      document.getElementById("videoStatusBadge").innerText =
+        `📹 Video: ${videoEnabled ? "ON" : "OFF"}`;
+      document.getElementById("audioStatusBadge").innerText =
+        `🎙️ Audio: ${audioEnabled ? "ON" : "OFF"}`;
+
+      const overlay = document.getElementById("camOffOverlay");
+      const camOffText = document.getElementById("camOffText");
+      if (!videoEnabled) {
+        overlay.style.display = "flex";
+        camOffText.innerText = callMode === "audio"
+          ? "🎙️ Audio Call Mode (Video Off)"
+          : "📵 Video Off";
+      } else {
+        overlay.style.display = "none";
+      }
+    }
+
+    async function ensureMediaStream(wantVideo, wantAudio) {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("HTTPS / Localhost needed for Camera & Mic.");
+      }
+      if (!localStream) {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: wantVideo, audio: wantAudio });
+        document.getElementById("localVideo").srcObject = localStream;
+      } else {
+        if (wantVideo && localStream.getVideoTracks().length === 0) {
+          const vs = await navigator.mediaDevices.getUserMedia({ video: true });
+          vs.getVideoTracks().forEach((t) => localStream.addTrack(t));
+          document.getElementById("localVideo").srcObject = localStream;
+        }
+        if (wantAudio && localStream.getAudioTracks().length === 0) {
+          const as = await navigator.mediaDevices.getUserMedia({ audio: true });
+          as.getAudioTracks().forEach((t) => localStream.addTrack(t));
+        }
+      }
+      localStream.getVideoTracks().forEach((t) => (t.enabled = videoEnabled));
+      localStream.getAudioTracks().forEach((t) => (t.enabled = audioEnabled));
+      updateMediaBadges();
+    }
+
+    async function startCall(mode) {
+      try {
+        callMode = mode;
+        videoEnabled = mode === "video";
+        audioEnabled = true;
+        await ensureMediaStream(videoEnabled, audioEnabled);
+        showToast(`${mode.toUpperCase()} call started`);
+      } catch (err) {
+        callMode = "none";
+        videoEnabled = false;
+        audioEnabled = false;
+        updateMediaBadges();
+        showToast(err.message || "Permission denied");
+      }
+    }
+
+    async function setVideoEnabled(on) {
+      try {
+        videoEnabled = on;
+        if (on) {
+          if (callMode === "none") callMode = "video";
+          await ensureMediaStream(true, audioEnabled);
+        } else if (localStream) {
+          localStream.getVideoTracks().forEach((t) => (t.enabled = false));
+          updateMediaBadges();
+        } else {
+          updateMediaBadges();
+        }
+      } catch (err) {
+        videoEnabled = false;
+        updateMediaBadges();
+        showToast(err.message || "Camera error");
+      }
+    }
+
+    async function setAudioEnabled(on) {
+      try {
+        audioEnabled = on;
+        if (on) {
+          if (callMode === "none") callMode = "audio";
+          await ensureMediaStream(videoEnabled, true);
+        } else if (localStream) {
+          localStream.getAudioTracks().forEach((t) => (t.enabled = false));
+          updateMediaBadges();
+        } else {
+          updateMediaBadges();
+        }
+      } catch (err) {
+        audioEnabled = false;
+        updateMediaBadges();
+        showToast(err.message || "Mic error");
+      }
+    }
+
+    function endCall() {
+      if (localStream) {
+        localStream.getTracks().forEach((t) => t.stop());
+        localStream = null;
+      }
+      document.getElementById("localVideo").srcObject = null;
+      callMode = "none";
+      videoEnabled = false;
+      audioEnabled = false;
+      updateMediaBadges();
+      showToast("Call ended");
+    }
+
+    updateMediaBadges();
+
+    // STUDY TIMER
+    let secLeft = 25 * 60;
+    let timerInt = null;
+
+    function drawTimer() {
+      const m = String(Math.floor(secLeft / 60)).padStart(2, "0");
+      const s = String(secLeft % 60).padStart(2, "0");
+      document.getElementById("timerText").innerText = `${m}:${s}`;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById("timerBtn");
+      if (timerInt) {
+        clearInterval(timerInt);
+        timerInt = null;
+        btn.innerText = "Start";
+      } else {
+        btn.innerText = "Pause";
+        timerInt = setInterval(() => {
+          if (secLeft > 0) {
+            secLeft--;
+            drawTimer();
+          } else {
+            clearInterval(timerInt);
+            timerInt = null;
+            btn.innerText = "Start";
+            showToast("⏰ 25m RRB Study Session Complete!");
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInt);
+      timerInt = null;
+      secLeft = 25 * 60;
+      document.getElementById("timerBtn").innerText = "Start";
+      drawTimer();
+    }
+
+    drawTimer();
+
+    // PERSONAL CHAT PARTNERS (WITH AUTO IMAGE) & PERSONAL CHAT WITH IMAGE SEND + DOWNLOAD
+    let selectedPartner = null;
+
+    function getPartners() {
+      return JSON.parse(localStorage.getItem(K_PARTNERS) || "[]");
+    }
+
+    function savePartners(list) {
+      localStorage.setItem(K_PARTNERS, JSON.stringify(list));
+    }
+
+    function selectChatPartner(partnerObjOrNull) {
+      selectedPartner = partnerObjOrNull;
+      document.getElementById("activeChatTargetPill").innerText =
+        selectedPartner ? `${selectedPartner.name}` : "General";
+      renderPartners();
+    }
+
+    function renderPartners() {
+      const list = getPartners();
+      document.getElementById("partnerBadge").innerText = `${list.length}`;
+      const box = document.getElementById("partnerListBox");
+
+      const genRow = `
+        <div class="partner-row ${!selectedPartner ? "active-partner" : ""}" onclick="selectChatPartner(null)" style="cursor:pointer;">
+          <div class="row">
+            <img src="${generateAutoAvatarDataUrl("General RRB")}" class="avatar-img sm" alt="General" />
+            <div><strong>General / Junnu</strong><div class="muted">All Chat</div></div>
+          </div>
+          <span class="pill">${!selectedPartner ? "Active" : "Chat"}</span>
+        </div>`;
+
+      const pRows = list.map((p, idx) => {
+        const av = generateAutoAvatarDataUrl(p.name || p.id);
+        const isAct = selectedPartner && selectedPartner.id === p.id;
+        return `
+          <div class="partner-row ${isAct ? "active-partner" : ""}" onclick="selectChatPartner(getPartners()[${idx}])" style="cursor:pointer;">
+            <div class="row">
+              <img src="${av}" class="avatar-img sm" alt="${p.name}" />
+              <div><strong>${p.name}</strong><div class="muted">${p.id}</div></div>
+            </div>
+            <button type="button" class="btn red sm" onclick="event.stopPropagation(); removePartner(${idx})">✕</button>
+          </div>`;
+      }).join("");
+
+      box.innerHTML = genRow + pRows;
+    }
+
+    function addUniquePartner() {
+      const pid = document.getElementById("partnerIdInput").value.trim().toUpperCase();
+      const pname = document.getElementById("partnerNameInput").value.trim();
+      if (!pid.startsWith(ID_PREFIX)) {
+        return showToast(`ID must start with ${ID_PREFIX}`);
+      }
+      if (!pname) {
+        return showToast("Enter partner name");
+      }
+      const list = getPartners();
+      if (list.some((x) => x.id.toUpperCase() === pid)) {
+        return showToast("Partner already added");
+      }
+      saveUsedId(pid);
+      const newP = { id: pid, name: pname };
+      list.push(newP);
+      savePartners(list);
+      selectChatPartner(newP);
+      document.getElementById("partnerIdInput").value = "";
+      document.getElementById("partnerNameInput").value = "";
+      showToast(`Added ${pname}`);
+    }
+
+    function removePartner(idx) {
+      const list = getPartners();
+      const removed = list[idx];
+      list.splice(idx, 1);
+      savePartners(list);
+      if (selectedPartner && removed && selectedPartner.id === removed.id) {
+        selectChatPartner(null);
+      } else {
+        renderPartners();
+      }
+    }
+
+    function getChatMessages() {
+      return JSON.parse(localStorage.getItem(K_CHAT) || "[]");
+    }
+
+    function saveChatMessages(arr) {
+      localStorage.setItem(K_CHAT, JSON.stringify(arr.slice(-120)));
+    }
+
+    function downloadImageDataUrl(dataUrl, filename) {
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = filename || `study_buddy_${Date.now()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast("Image downloaded!");
+    }
+
+    function renderChat() {
+      const box = document.getElementById("talkBox");
+      const msgs = getChatMessages();
+      if (!msgs.length) {
+        box.innerHTML = `<div class="msg-b sys">Personal Chat ready! Send text or images and download any image.</div>`;
+        return;
+      }
+      box.innerHTML = msgs.map((m, idx) => {
+        const cls = m.sender === "me" ? "msg-b me" : m.sender === "junnu" ? "msg-b junnu" : "msg-b sys";
+        const header = m.sender === "me"
+          ? `<div style="font-size:10px; opacity:0.85; font-weight:700;">${m.to ? "To " + m.to + " • " : ""}${m.time || ""}</div>`
+          : `<div style="font-size:10px; color:#475569; font-weight:700;">${m.author || "System"} • ${m.time || ""}</div>`;
+        const textPart = m.text ? `<div>${escapeHtml(m.text)}</div>` : "";
+        const imgPart = m.image
+          ? `<img src="${m.image}" class="chat-img" alt="Shared image" />
+             <button type="button" class="img-dl-btn" onclick="downloadChatMsgImage(${idx})">⬇️ Download</button>`
+          : "";
+        return `<div class="${cls}">${header}${textPart}${imgPart}</div>`;
+      }).join("");
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function downloadChatMsgImage(idx) {
+      const msgs = getChatMessages();
+      if (msgs[idx] && msgs[idx].image) {
+        downloadImageDataUrl(msgs[idx].image, `chat_image_${idx + 1}.png`);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function sendTalk() {
+      const inp = document.getElementById("talkInput");
+      const txt = inp.value.trim();
+      if (!txt) return;
+      const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      const msgs = getChatMessages();
+      msgs.push({
+        sender: "me",
+        text: txt,
+        to: selectedPartner ? selectedPartner.name : "",
+        time: nowTime
+      });
+
+      if (txt.toLowerCase().startsWith("doubt:")) {
+        msgs.push({
+          sender: "junnu",
+          author: "Junnu AI",
+          text: generateJunnuAnswer(txt.slice(6).trim()),
+          time: nowTime
+        });
+      }
+      saveChatMessages(msgs);
+      inp.value = "";
+      renderChat();
+    }
+
+    function sendChatImage(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 2000000) {
+        return showToast("Image must be under 2MB");
+      }
+      const caption = document.getElementById("talkInput").value.trim();
+      const reader = new FileReader();
+      reader.onload = () => {
+        const nowTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const msgs = getChatMessages();
+        msgs.push({
+          sender: "me",
+          text: caption,
+          image: reader.result,
+          to: selectedPartner ? selectedPartner.name : "",
+          time: nowTime
+        });
+        saveChatMessages(msgs);
+        document.getElementById("talkInput").value = "";
+        e.target.value = "";
+        renderChat();
+        showToast("Image sent!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    renderPartners();
+    renderChat();
+
+    // MINNU RRB GK QUIZ (EVERY 5 MINUTES AUTO QUESTION + A/B/C/D OPTIONS)
+    const RRB_QUESTION_BANK = {
+      te: [
+        {
+          cat: "Polity & Railways",
+          q: "భారతీయ రైల్వేల ప్రధాన కార్యాలయం (Railway Board) ఎక్కడ ఉంది?",
+          opts: ["A) ముంబై", "B) న్యూఢిల్లీ", "C) కోల్‌కతా", "D) సికింద్రాబాద్"],
+          ans: 1,
+          exp: "Railway Board ప్రధాన కార్యాలయం న్యూఢిల్లీలో ఉంది (1853లో తొలి రైలు ముంబై-థానే మధ్య నడిచింది)."
+        },
+        {
+          cat: "Polity & Railways",
+          q: "భారత రాజ్యాంగంలో ప్రాథమిక విధులు (Fundamental Duties) ఏ ఆర్టికల్‌లో ఉన్నాయి?",
+          opts: ["A) Article 21", "B) Article 368", "C) Article 51A", "D) Article 110"],
+          ans: 2,
+          exp: "42వ రాజ్యాంగ సవరణ (1976) ద్వారా Part IV-A లో Article 51A చేర్చారు."
+        },
+        {
+          cat: "Geography & History",
+          q: "భారతదేశంలో పొడవైన నది ఏది?",
+          opts: ["A) గోదావరి", "B) గంగా", "C) కృష్ణా", "D) బ్రహ్మపుత్ర"],
+          ans: 1,
+          exp: "భారతదేశంలో ప్రవహించే నదులలో గంగా నది పొడవైనది (~2,525 km)."
+        },
+        {
+          cat: "Science & Tech",
+          q: "విద్యుత్ నిరోధం (Electrical Resistance) యొక్క SI ప్రమాణం ఏది?",
+          opts: ["A) వోల్ట్ (Volt)", "B) ఆంపియర్ (Ampere)", "C) ఓమ్ (Ohm)", "D) వాట్ (Watt)"],
+          ans: 2,
+          exp: "విద్యుత్ నిరోధాన్ని Ohm (Ω) తో కొలుస్తారు (Ohm's Law: V = IR)."
+        },
+        {
+          cat: "Current Affairs",
+          q: "RRB NTPC & Group D పరీక్షలలో జనరల్ అవేర్‌నెస్‌లో ప్రధానంగా ఏ అంశాలు వస్తాయి?",
+          opts: ["A) కేవలం సినిమాలు", "B) Current Affairs, GK, Science & Polity", "C) కేవలం క్రికెట్ స్కోర్లు", "D) కేవలం టైపింగ్"],
+          ans: 1,
+          exp: "RRB CBT-1 / CBT-2 లో Current Affairs, Indian Polity, History, Geography, General Science కీలకం."
+        }
+      ],
+      en: [
+        {
+          cat: "Polity & Railways",
+          q: "Where is the headquarters of the Indian Railway Board located?",
+          opts: ["A) Mumbai", "B) New Delhi", "C) Kolkata", "D) Secunderabad"],
+          ans: 1,
+          exp: "The Railway Board headquarters is in New Delhi; the first passenger train ran in 1853."
+        },
+        {
+          cat: "Polity & Railways",
+          q: "Which Article of the Indian Constitution deals with Fundamental Duties?",
+          opts: ["A) Article 21", "B) Article 368", "C) Article 51A", "D) Article 110"],
+          ans: 2,
+          exp: "Article 51A under Part IV-A was added by the 42nd Amendment Act, 1976."
+        },
+        {
+          cat: "Geography & History",
+          q: "Which is the longest river flowing in India?",
+          opts: ["A) Godavari", "B) Ganga", "C) Krishna", "D) Brahmaputra"],
+          ans: 1,
+          exp: "The Ganga is the longest river in India (~2,525 km)."
+        },
+        {
+          cat: "Science & Tech",
+          q: "What is the SI unit of Electrical Resistance?",
+          opts: ["A) Volt", "B) Ampere", "C) Ohm", "D) Watt"],
+          ans: 2,
+          exp: "Electrical resistance is measured in Ohms (Ω), given by V = IR."
+        },
+        {
+          cat: "Current Affairs",
+          q: "Which areas carry major weightage in RRB General Awareness?",
+          opts: ["A) Only movies", "B) Current Affairs, GK, Science & Polity", "C) Only sports scores", "D) Only typing"],
+          ans: 1,
+          exp: "Current Affairs, Polity, History, Geography, and General Science are core RRB topics."
+        }
+      ],
+      hi: [
+        {
+          cat: "Polity & Railways",
+          q: "भारतीय रेलवे बोर्ड का मुख्यालय कहाँ स्थित है?",
+          opts: ["A) मुंबई", "B) नई दिल्ली", "C) कोलकाता", "D) सिकंदराबाद"],
+          ans: 1,
+          exp: "रेलवे बोर्ड का मुख्यालय नई दिल्ली में है; पहली ट्रेन 1853 में चली थी।"
+        },
+        {
+          cat: "Polity & Railways",
+          q: "भारतीय संविधान के किस अनुच्छेद में मौलिक कर्तव्य (Fundamental Duties) हैं?",
+          opts: ["A) Article 21", "B) Article 368", "C) Article 51A", "D) Article 110"],
+          ans: 2,
+          exp: "42वें संविधान संशोधन (1976) द्वारा अनुच्छेद 51A जोड़ा गया।"
+        },
+        {
+          cat: "Geography & History",
+          q: "भारत की सबसे लंबी नदी कौन सी है?",
+          opts: ["A) गोदावरी", "B) गंगा", "C) कृष्णा", "D) ब्रह्मपुत्र"],
+          ans: 1,
+          exp: "गंगा भारत की सबसे लंबी नदी है (~2,525 किमी)।"
+        },
+        {
+          cat: "Science & Tech",
+          q: "विद्युत प्रतिरोध (Resistance) का SI मात्रक क्या है?",
+          opts: ["A) वोल्ट", "B) एम्पीयर", "C) ओम (Ohm)", "D) वाट"],
+          ans: 2,
+          exp: "विद्युत प्रतिरोध का SI मात्रक ओम (Ω) है।"
+        },
+        {
+          cat: "Current Affairs",
+          q: "RRB सामान्य जागरूकता में मुख्य विषय कौन से होते हैं?",
+          opts: ["A) केवल फिल्में", "B) Current Affairs, GK, Science & Polity", "C) केवल खेल", "D) केवल टाइपिंग"],
+          ans: 1,
+          exp: "Current Affairs, Polity, Geography, History और Science मुख्य विषय हैं।"
+        }
+      ]
+    };
+
+    let minnuScore = Number(localStorage.getItem(K_SCORE) || "0");
+    let minnuFiltered = [...RRB_QUESTION_BANK.te];
+    let minnuIdx = 0;
+    let selectedOptIdx = null;
+    let answeredCurrentQ = false;
+
+    function getLangBank() {
+      return RRB_QUESTION_BANK[me.lang] || RRB_QUESTION_BANK.te;
+    }
+
+    function filterRRBQuestions() {
+      const cat = document.getElementById("rrbCategoryFilter").value;
+      const bank = getLangBank();
+      minnuFiltered = cat === "ALL" ? [...bank] : bank.filter((item) => item.cat === cat);
+      if (!minnuFiltered.length) minnuFiltered = [...bank];
+      minnuIdx = 0;
+      renderMinnuQuestion();
+    }
+
+    function renderMinnuQuestion() {
+      document.getElementById("minnuScore").innerText = `Score: ${minnuScore}`;
+      const qObj = minnuFiltered[minnuIdx % minnuFiltered.length];
+      selectedOptIdx = null;
+      answeredCurrentQ = false;
+
+      document.getElementById("minnuQCard").innerHTML =
+        `<strong>Minnu AI (${qObj.cat}):</strong>\n${qObj.q}`;
+
+      const optBox = document.getElementById("minnuOptionsBox");
+      optBox.innerHTML = qObj.opts.map((optText, i) => `
+        <button type="button" class="opt-btn" id="minnuOpt_${i}" onclick="pickMinnuOption(${i})">${optText}</button>
+      `).join("");
+
+      document.getElementById("minnuFeedback").innerText = "";
+    }
+
+    function pickMinnuOption(i) {
+      if (answeredCurrentQ) return;
+      selectedOptIdx = i;
+      const qObj = minnuFiltered[minnuIdx % minnuFiltered.length];
+      qObj.opts.forEach((_, idx) => {
+        const b = document.getElementById("minnuOpt_" + idx);
+        if (b) b.classList.toggle("selected", idx === i);
+      });
+    }
+
+    function checkSelectedMinnuOption() {
+      if (selectedOptIdx === null) {
+        return showToast("Select option A, B, C, or D");
+      }
+      if (answeredCurrentQ) return;
+      answeredCurrentQ = true;
+
+      const qObj = minnuFiltered[minnuIdx % minnuFiltered.length];
+      qObj.opts.forEach((_, idx) => {
+        const b = document.getElementById("minnuOpt_" + idx);
+        if (!b) return;
+        b.classList.remove("selected");
+        if (idx === qObj.ans) b.classList.add("correct");
+        else if (idx === selectedOptIdx) b.classList.add("wrong");
+      });
+
+      const fb = document.getElementById("minnuFeedback");
+      if (selectedOptIdx === qObj.ans) {
+        minnuScore += 10;
+        localStorage.setItem(K_SCORE, String(minnuScore));
+        document.getElementById("minnuScore").innerText = `Score: ${minnuScore}`;
+        fb.innerText = `✅ Correct! +10 pts — ${qObj.exp}`;
+      } else {
+        fb.innerText = `❌ ${qObj.opts[qObj.ans]} — ${qObj.exp}`;
+      }
+    }
+
+    function changeMinnuQuestion() {
+      minnuIdx = (minnuIdx + 1) % minnuFiltered.length;
+      renderMinnuQuestion();
+    }
+
+    // EVERY 5 MINUTES (300 SECONDS) MINNU RRB QUESTION TIMER
+    let minnu5mSec = 300;
+    function drawMinnu5mCountdown() {
+      const m = String(Math.floor(minnu5mSec / 60)).padStart(2, "0");
+      const s = String(minnu5mSec % 60).padStart(2, "0");
+      const el = document.getElementById("minnu5mCountdown");
+      if (el) el.innerText = `${m}:${s}`;
+    }
+
+    function triggerMinnu5MinQuestion(fromUser = false) {
+      minnu5mSec = 300;
+      drawMinnu5mCountdown();
+      changeMinnuQuestion();
+      const dict = I18N[me.lang] || I18N.te;
+      showToast(fromUser ? dict.minnu5mAlert : dict.minnu5mAlert);
+    }
+
+    setInterval(() => {
+      if (minnu5mSec > 0) {
+        minnu5mSec--;
+        drawMinnu5mCountdown();
+      } else {
+        triggerMinnu5MinQuestion(false);
+      }
+    }, 1000);
+
+    drawMinnu5mCountdown();
+
+    // JUNNU AI EXPLAINER
+    function renderJunnuWelcome() {
+      const dict = I18N[me.lang] || I18N.te;
+      const box = document.getElementById("junnuBox");
+      if (box && box.dataset.initLang !== me.lang) {
+        box.dataset.initLang = me.lang;
+        box.innerHTML = `<div class="msg-b junnu"><strong>Junnu AI:</strong> ${dict.junnuWelcome}</div>`;
+      }
+    }
+
+    function generateJunnuAnswer(q) {
+      const l = q.toLowerCase();
+      if (l.includes("rail") || l.includes("zone") || l.includes("రైల్వే")) {
+        return "Indian Railways లో 17+ Zones (South Central Railway - Secunderabad) ఉన్నాయి. RRB లో zones, headquarters & dates ముఖ్యం.";
+      }
+      if (l.includes("article") || l.includes("polity") || l.includes("రాజ్యాంగ")) {
+        return "Polity లో Fundamental Rights (Art 12-35), DPSP (Art 36-51), Fundamental Duties (Art 51A), Parliament & President తప్పక చదవాలి.";
+      }
+      if (l.includes("newton") || l.includes("science") || l.includes("sCiEnCe".toLowerCase())) {
+        return "Newton's 1st Law (Inertia), 2nd Law (F = ma), 3rd Law (Action = -Reaction) RRB Science లో తరచుగా వస్తాయి.";
+      }
+      return `"${q}" పై RRB పాయింట్: ముందు బేసిక్ కాన్సెప్ట్ చదివి, 25+ MCQ ప్రాక్టీస్ చేయండి. Minnu RRB Quiz లో A/B/C/D ఆప్షన్లతో టెస్ట్ చేయండి.`;
+    }
+
+    function askJunnu() {
+      const inp = document.getElementById("junnuInput");
+      const q = inp.value.trim();
+      if (!q) return;
+      const box = document.getElementById("junnuBox");
+      box.innerHTML += `<div class="msg-b me">${escapeHtml(q)}</div>`;
+      box.innerHTML += `<div class="msg-b junnu"><strong>Junnu AI:</strong> ${escapeHtml(generateJunnuAnswer(q))}</div>`;
+      inp.value = "";
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // DAILY NEWS & BOOKS
+    const SAMPLE_NEWS = [
+      { title: "Indian Railways Modernization & Safety Drive", cat: "Railways & Infra", summary: "Focus on track safety, Kavach protection systems, and passenger amenities across zones." },
+      { title: "ISRO & Space Science Milestones", cat: "Science & Tech", summary: "Satellite launch readiness and indigenous propulsion research updates useful for RRB GK." },
+      { title: "National Economy & Union Schemes", cat: "Current Affairs", summary: "Key budget allocations, digital public infrastructure, and youth skill initiatives." }
+    ];
+
+    function syncDailyNews(forceToast) {
+      const todayKey = new Date().toISOString().slice(0, 10);
+      let cache = JSON.parse(localStorage.getItem(K_NEWS_CACHE) || "null");
+      if (!cache || cache.date !== todayKey || forceToast) {
+        cache = {
+          date: todayKey,
+          syncedAt: new Date().toLocaleString(),
+          items: SAMPLE_NEWS
+        };
+        localStorage.setItem(K_NEWS_CACHE, JSON.stringify(cache));
+      }
+      document.getElementById("newsSyncInfo").innerText = `Date: ${cache.date} • Synced: ${cache.syncedAt}`;
+      document.getElementById("dailyNewsList").innerHTML = cache.items.map((n) => `
+        <div class="news-item">
+          <div class="news-meta">${n.cat}</div>
+          <strong>${n.title}</strong>
+          <div class="muted">${n.summary}</div>
+        </div>
+      `).join("");
+      if (forceToast) showToast("Daily News updated!");
+    }
+
+    const BOOKS = {
+      rrb_gk: `🚆 RRB GK QUICK REVISION
+• First Train in India: April 16, 1853 (Mumbai to Thane).
+• SCR Zone HQ: Secunderabad.
+• Constitution Adopted: Nov 26, 1949 | Enforced: Jan 26, 1950.`,
+      bible: `✝️ HOLY BIBLE — KEY VERSES
+• Psalm 23:1 — "The Lord is my shepherd; I shall not want."
+• Proverbs 3:5 — "Trust in the Lord with all thine heart..."
+• Philippians 4:13 — "I can do all things through Christ which strengtheneth me."`,
+      science: `🔬 GENERAL SCIENCE FORMULAS
+• Speed = Distance / Time | Force = Mass × Acceleration
+• Ohm's Law: V = I × R | Power: P = V × I
+• Vitamin C deficiency -> Scurvy; Vitamin D -> Rickets.`,
+      maths: `📐 RRB ARITHMETIC SHORTCUTS
+• Average = Sum of observations / Count
+• Simple Interest (SI) = (P × R × T) / 100
+• Profit % = (Profit / CP) × 100`
+    };
+
+    let activeBookKey = "rrb_gk";
+    function pickBook(key, btn) {
+      activeBookKey = key;
+      document.querySelectorAll(".b-tab").forEach((t) => t.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      drawBook();
+    }
+
+    function drawBook() {
+      const q = (document.getElementById("bookSearch")?.value || "").trim().toLowerCase();
+      const raw = BOOKS[activeBookKey] || "";
+      if (!q) {
+        document.getElementById("bookContentBox").innerText = raw;
+        return;
+      }
+      const matched = raw.split("\n").filter((line) => line.toLowerCase().includes(q));
+      document.getElementById("bookContentBox").innerText = matched.length ? matched.join("\n") : "No matching lines.";
+    }
+    drawBook();
+
+    // GAMES SWITCHER (TYPING, KEY DODGE, CHESS, LUDO, TTT)
+    function pickGame(g) {
+      ["typing", "keygame", "chess", "ludo", "ttt"].forEach((id) => {
+        const el = document.getElementById("g-" + id);
+        if (el) el.style.display = id === g ? "block" : "none";
+      });
+    }
+
+    // 1. KEYBOARD TYPING TEST
+    const TYPING_SAMPLES = [
+      "Indian Railways connects every corner of the nation with speed and dedication.",
+      "Consistency and daily mock tests build confidence for RRB NTPC and Group D.",
+      "Accuracy first and steady speed will help you type faster without mistakes."
+    ];
+    let typingSample = TYPING_SAMPLES[0];
+    let typingStartTime = null;
+    let typingTimerInt = null;
+    let typingSecLeft = 30;
+
+    function resetTypingGame() {
+      clearInterval(typingTimerInt);
+      typingTimerInt = null;
+      typingStartTime = null;
+      typingSecLeft = 30;
+      typingSample = TYPING_SAMPLES[Math.floor(Math.random() * TYPING_SAMPLES.length)];
+      document.getElementById("typingTargetText").innerText = typingSample;
+      const box = document.getElementById("typingInputBox");
+      box.value = "";
+      box.disabled = false;
+      document.getElementById("typingWPM").innerText = "WPM: 0";
+      document.getElementById("typingAcc").innerText = "Accuracy: 100%";
+      document.getElementById("typingTime").innerText = "30s";
+      document.getElementById("typingResult").innerText = "";
+    }
+
+    function handleTypingInput() {
+      const box = document.getElementById("typingInputBox");
+      const val = box.value;
+      if (!typingStartTime && val.length > 0) {
+        typingStartTime = Date.now();
+        typingTimerInt = setInterval(() => {
+          typingSecLeft--;
+          document.getElementById("typingTime").innerText = `${typingSecLeft}s`;
+          if (typingSecLeft <= 0) {
+            clearInterval(typingTimerInt);
+            typingTimerInt = null;
+            box.disabled = true;
+            document.getElementById("typingResult").innerText = "⏱️ Time up! Click New Text to try again.";
+          }
+        }, 1000);
+      }
+
+      let correctChars = 0;
+      for (let i = 0; i < val.length; i++) {
+        if (val[i] === typingSample[i]) correctChars++;
+      }
+      const acc = val.length ? Math.round((correctChars / val.length) * 100) : 100;
+      const elapsedMin = Math.max((Date.now() - (typingStartTime || Date.now())) / 60000, 1 / 60);
+      const wpm = Math.round((correctChars / 5) / elapsedMin);
+
+      document.getElementById("typingWPM").innerText = `WPM: ${wpm}`;
+      document.getElementById("typingAcc").innerText = `Accuracy: ${acc}%`;
+
+      if (val === typingSample) {
+        clearInterval(typingTimerInt);
+        typingTimerInt = null;
+        box.disabled = true;
+        document.getElementById("typingResult").innerText = `🎉 Completed! Final WPM: ${wpm}, Accuracy: ${acc}%`;
+      }
+    }
+    resetTypingGame();
+
+    // 2. KEYBOARD KEY CATCHER + ARROW BASKET GAME
+    let keyGameRunning = false;
+    let keyGameScore = 0;
+    let keyGameLives = 5;
+    let basketXPercent = 50;
+    let activeFalling = null;
+    let keyGameLoop = null;
+
+    function updateBasketPosition() {
+      const basket = document.getElementById("catcherBasket");
+      if (!basket) return;
+      basketXPercent = Math.max(12, Math.min(88, basketXPercent));
+      basket.style.left = basketXPercent + "%";
+    }
+
+    function spawnFallingKey() {
+      const arena = document.getElementById("keyArena");
+      if (!arena) return;
+      if (activeFalling && activeFalling.el) activeFalling.el.remove();
+      const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+      const ch = letters[Math.floor(Math.random() * letters.length)];
+      const xPct = 15 + Math.random() * 70;
+      const el = document.createElement("div");
+      el.className = "falling-key";
+      el.innerText = ch;
+      el.style.left = xPct + "%";
+      el.style.top = "6px";
+      arena.appendChild(el);
+      activeFalling = { ch, xPct, yPx: 6, el };
+    }
+
+    function stopKeyCatcher() {
+      keyGameRunning = false;
+      clearInterval(keyGameLoop);
+      keyGameLoop = null;
+      if (activeFalling && activeFalling.el) activeFalling.el.remove();
+      activeFalling = null;
+    }
+
+    function startKeyCatcher() {
+      stopKeyCatcher();
+      keyGameRunning = true;
+      keyGameScore = 0;
+      keyGameLives = 5;
+      basketXPercent = 50;
+      updateBasketPosition();
+      document.getElementById("keyGameScore").innerText = "Score: 0";
+      document.getElementById("keyGameLives").innerText = "Lives: 5";
+      spawnFallingKey();
+
+      keyGameLoop = setInterval(() => {
+        if (!keyGameRunning || !activeFalling) return;
+        activeFalling.yPx += 7;
+        activeFalling.el.style.top = activeFalling.yPx + "px";
+
+        const basketHit = activeFalling.yPx >= 105 && Math.abs(activeFalling.xPct - basketXPercent) < 16;
+        if (basketHit) {
+          keyGameScore += 10;
+          document.getElementById("keyGameScore").innerText = `Score: ${keyGameScore}`;
+          spawnFallingKey();
+          return;
+        }
+
+        if (activeFalling.yPx > 125) {
+          keyGameLives--;
+          document.getElementById("keyGameLives").innerText = `Lives: ${keyGameLives}`;
+          if (keyGameLives <= 0) {
+            stopKeyCatcher();
+            showToast(`Game Over! Score: ${keyGameScore}`);
+          } else {
+            spawnFallingKey();
+          }
+        }
+      }, 120);
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (!keyGameRunning) return;
+      const gKey = document.getElementById("g-keygame");
+      if (!gKey || gKey.style.display === "none") return;
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        basketXPercent -= 8;
+        updateBasketPosition();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        basketXPercent += 8;
+        updateBasketPosition();
+      } else if (activeFalling && e.key.toUpperCase() === activeFalling.ch) {
+        keyGameScore += 5;
+        document.getElementById("keyGameScore").innerText = `Score: ${keyGameScore}`;
+        spawnFallingKey();
+      }
+    });
+
+    // 3. CHESS
+    const INIT_CHESS = [
+      ["♜","♞","♝","♛","♚","♝","♞","♜"],
+      ["♟","♟","♟","♟","♟","♟","♟","♟"],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["♙","♙","♙","♙","♙","♙","♙","♙"],
+      ["♖","♘","♗","♕","♔","♗","♘","♖"]
+    ];
+    let chessBoard = [], chessTurn = "W", chessSel = null;
+    const isW = (p) => ["♖","♘","♗","♕","♔","♙"].includes(p);
+    const isB = (p) => ["♜","♞","♝","♛","♚","♟"].includes(p);
+
+    function resetChess() {
+      chessBoard = INIT_CHESS.map((r) => [...r]);
+      chessTurn = "W";
+      chessSel = null;
+      drawChess();
+    }
+
+    function drawChess() {
+      document.getElementById("chessStatus").innerText = `Turn: ${chessTurn === "W" ? "White" : "Black"}`;
+      const g = document.getElementById("chessGrid");
+      g.innerHTML = "";
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          const sq = document.createElement("div");
+          sq.className = `sq ${(r + c) % 2 === 0 ? "l" : "d"}` +
+            (chessSel && chessSel[0] === r && chessSel[1] === c ? " sel" : "");
+          sq.innerText = chessBoard[r][c];
+          sq.onclick = () => clickChess(r, c);
+          g.appendChild(sq);
+        }
+      }
+    }
+
+    function clickChess(r, c) {
+      const piece = chessBoard[r][c];
+      if (!chessSel) {
+        if (!piece) return;
+        if ((chessTurn === "W" && !isW(piece)) || (chessTurn === "B" && !isB(piece))) {
+          return showToast("Not your piece");
+        }
+        chessSel = [r, c];
+        drawChess();
+        return;
+      }
+      const [sr, sc] = chessSel;
+      if (sr === r && sc === c) {
+        chessSel = null;
+        drawChess();
+        return;
+      }
+      const moving = chessBoard[sr][sc];
+      if ((isW(moving) && isW(piece)) || (isB(moving) && isB(piece))) {
+        chessSel = [r, c];
+        drawChess();
+        return;
+      }
+      chessBoard[r][c] = moving;
+      chessBoard[sr][sc] = "";
+      chessSel = null;
+      chessTurn = chessTurn === "W" ? "B" : "W";
+      drawChess();
+    }
+    resetChess();
+
+    // 4. LUDO
+    let p1Pos = 0, p2Pos = 0, ludoTurn = 1;
+    function resetLudo() {
+      p1Pos = 0;
+      p2Pos = 0;
+      ludoTurn = 1;
+      document.getElementById("ludoDice").innerText = "Dice: -";
+      drawLudo();
+    }
+
+    function drawLudo() {
+      document.getElementById("ludoStatus").innerText =
+        `Player ${ludoTurn} (${ludoTurn === 1 ? "🔴" : "🔵"}) Turn • Goal: Tile 24`;
+      const g = document.getElementById("ludoGrid");
+      g.innerHTML = "";
+      for (let i = 1; i <= 24; i++) {
+        const cell = document.createElement("div");
+        cell.className = "l-sq" + ([1, 9, 17, 24].includes(i) ? " safe" : "");
+        const tokens = (p1Pos === i ? "🔴" : "") + (p2Pos === i ? "🔵" : "");
+        cell.innerHTML = `<span>${i}</span><strong>${tokens || ""}</strong>`;
+        g.appendChild(cell);
+      }
+    }
+
+    function rollLudo() {
+      const d = Math.floor(Math.random() * 6) + 1;
+      document.getElementById("ludoDice").innerText = `Dice: ${d}`;
+      if (ludoTurn === 1) {
+        p1Pos = Math.min(24, p1Pos + d);
+        if (p1Pos === 24) {
+          drawLudo();
+          showToast("🎉 Player 1 (🔴) Wins Ludo!");
+          return;
+        }
+        ludoTurn = 2;
+      } else {
+        p2Pos = Math.min(24, p2Pos + d);
+        if (p2Pos === 24) {
+          drawLudo();
+          showToast("🎉 Player 2 (🔵) Wins Ludo!");
+          return;
+        }
+        ludoTurn = 1;
+      }
+      drawLudo();
+    }
+    resetLudo();
+
+    // 5. TIC-TAC-TOE
+    let tttB = Array(9).fill(""), tttTurn = "X", tttOver = false;
+    function resetTTT() {
+      tttB = Array(9).fill("");
+      tttTurn = "X";
+      tttOver = false;
+      drawTTT();
+    }
+
+    function drawTTT() {
+      if (!tttOver) document.getElementById("tttStatus").innerText = `Player ${tttTurn} Turn`;
+      const g = document.getElementById("tttGrid");
+      g.innerHTML = "";
+      tttB.forEach((v, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "ttt-sq";
+        b.innerText = v;
+        b.onclick = () => playTTT(i);
+        g.appendChild(b);
+      });
+    }
+
+    function checkTTTWinner() {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (const [a, b, c] of lines) {
+        if (tttB[a] && tttB[a] === tttB[b] && tttB[a] === tttB[c]) return tttB[a];
+      }
+      return tttB.every(Boolean) ? "Draw" : null;
+    }
+
+    function playTTT(i) {
+      if (tttOver || tttB[i]) return;
+      tttB[i] = tttTurn;
+      const res = checkTTTWinner();
+      if (res) {
+        tttOver = true;
+        document.getElementById("tttStatus").innerText = res === "Draw" ? "Match Draw!" : `Winner: ${res}!`;
+        showToast(res === "Draw" ? "Draw!" : `${res} Wins!`);
+      } else {
+        tttTurn = tttTurn === "X" ? "O" : "X";
+      }
+      drawTTT();
+    }
+    resetTTT();
+
+    // INITIALIZE LANGUAGE & APP STATE
+    applyLanguageUI();
+  </script>
+</body>
+</html>
